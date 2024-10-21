@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Provider {
+  CREDENTIALS
+  GOOGLE
+  GITHUB
+}
+
+model User {
+  id        String      @id @default(cuid()) 
+  email     String      @unique
+  username  String?     @unique
+  password  String
+  provider  Provider    @default(CREDENTIALS)
+  bookmarks Bookmark[]
+}
+
+model Bookmark {
+  id          Int    @id @default(autoincrement())
+  userId      String    @unique
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  animeId     String
+  animeTitle  String
+}
